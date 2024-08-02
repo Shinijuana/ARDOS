@@ -7,12 +7,10 @@
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/fernandojsg/aframe-gesture-detector@3.4.0/dist/aframe-gesture-detector.min.js"></script>
-  <script src="https://rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/xrextras/aframe/dist/aframe-xrextras.min.js"></script>
 </head>
-
 <body>
-  <a-scene gesture-detector loading renderer="colorManagement: true" vr-mode-ui="enabled: false">
+  <button id="start-ar">Start AR</button>
+  <a-scene id="scene" gesture-detector loading renderer="colorManagement: true" vr-mode-ui="enabled: false" embedded>
     <!-- Assets -->
     <a-assets>
       <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
@@ -26,14 +24,56 @@
     <a-entity light="type: directional; intensity: 0.8; castShadow: true;" position="1 2 1"></a-entity>
 
     <!-- Marker and 3D Model -->
-    <a-image-target name="marker" url="images/marker.patt">
-      <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="1 1 1" position="0 0 0" shadow="receive: false" hold-drag two-finger-rotate pinch-scale></a-entity>
-      <a-plane id="ground" rotation="-90 0 0" width="1000" height="1000" material="shader: shadow" shadow></a-plane>
-    </a-image-target>
+    <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="1 1 1" position="0 0 -10" shadow="receive: false" hold-drag two-finger-rotate pinch-scale></a-entity>
+    <a-plane id="ground" rotation="-90 0 0" width="1000" height="1000" material="shader: shadow" shadow></a-plane>
   </a-scene>
 
-  <!-- Gesture Handling Scripts -->
   <script>
+    document.getElementById('start-ar').addEventListener('click', async () => {
+      if (navigator.xr) {
+        try {
+          const xrSession = await navigator.xr.requestSession('immersive-ar', {
+            requiredFeatures: ['local-floor']
+          });
+          onSessionStarted(xrSession);
+        } catch (e) {
+          console.error('Failed to start AR session:', e);
+        }
+      } else {
+        console.log('WebXR not supported');
+      }
+    });
+
+    async function onSessionStarted(session) {
+      const sceneEl = document.querySelector('a-scene');
+      const gl = sceneEl.renderer.getContext();
+      await gl.makeXRCompatible();
+      const xrLayer = new XRWebGLLayer(session, gl);
+
+      session.updateRenderState({ baseLayer: xrLayer });
+
+      const referenceSpace = await session.requestReferenceSpace('local-floor');
+
+      session.requestAnimationFrame(onXRFrame);
+
+      function onXRFrame(time, frame) {
+        const session = frame.session;
+        session.requestAnimationFrame(onXRFrame);
+
+        const pose = frame.getViewerPose(referenceSpace);
+        if (pose) {
+          const glLayer = session.renderState.baseLayer;
+          gl.bindFramebuffer(gl.FRAMEBUFFER, glLayer.framebuffer);
+          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+          for (const view of pose.views) {
+            const viewport = glLayer.getViewport(view);
+            gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
+          }
+        }
+      }
+    }
+
     AFRAME.registerComponent('hold-drag', {
       schema: {
         enabled: {default: true}
