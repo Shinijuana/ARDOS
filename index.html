@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/gh/fernandojsg/aframe-gesture-detector@3.4.0/dist/aframe-gesture-detector.min.js"></script>
   <script src="https://rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/3.3.2/aframe/build/aframe-ar.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/xrextras/aframe/dist/aframe-xrextras.min.js"></script>
 </head>
 
 <body><a-scene gesture-detector loading renderer="colorManagement: true" vr-mode-ui="enabled: false">
@@ -20,7 +21,7 @@
         <a-camera id="camera" position="0 1.6 3" raycaster="objects: .cantap" cursor="fuse: false; rayOrigin: mouse;" wasd-controls="enabled: false" look-controls="touchEnabled: false"></a-camera>
         <a-entity light="type: directional; intensity: 0.8; castShadow: true;" position="1 2 1" target="#model"></a-entity>
         <a-light type="ambient" intensity="0.7"></a-light>
-        <a-marker preset="hiro">
+        <a-marker type="image" url="images/marker.jpg">
         <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="3 3 3" position="0 0 -5" shadow="receive: false" hold-drag two-finger-rotate pinch-scale></a-entity><a-plane id="ground" rotation="-90 0 0" width="1000" height="1000" material="shader: shadow" shadow></a-plane></a-scene>
       </a-marker>
   <!-- Include the gesture handler scripts -->
