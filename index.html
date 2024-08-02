@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Public AR Experience</title>
+  <title>AR Experience</title>
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aframe-mindar@0.6.0/dist/aframe-mindar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aframe-ar@0.0.1/aframe-ar.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/aframe-gesture-detector@4.0.3/dist/aframe-gesture-detector.min.js"></script>
 </head>
 <body>
   <a-scene
-    mindar="imageTargetSrc: ./assets/targets.mind; autoStart: true;"
+    embedded
+    arjs="sourceType: webcam; debugUIEnabled: false;"
     gesture-detector
-    color-space="sRGB"
     renderer="colorManagement: true"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: true">
@@ -22,26 +22,24 @@
       <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
     </a-assets>
 
-    <a-camera position="0 1.6 0"></a-camera>
+    <!-- La camera ora segue il dispositivo -->
+    <a-camera look-controls="pointerLockEnabled: false"></a-camera>
 
-    <a-entity mindar-image-target="targetIndex: 0">
-      <a-entity 
-        id="model" 
-        gltf-model="#sandCastleModel" 
-        class="cantap" 
-        scale="3 3 3" 
-        position="0 0 0"
-        shadow="receive: false"
-        gesture-handler>
-      </a-entity>
+    <!-- Aggiungi il modello 3D alla scena -->
+    <a-entity
+      id="model"
+      gltf-model="#sandCastleModel"
+      position="0 0 -5"
+      scale="3 3 3"
+      gesture-handler>
     </a-entity>
 
+    <!-- Illuminazione per la scena -->
     <a-light type="ambient" intensity="0.7"></a-light>
-    <a-entity light="type: directional; intensity: 0.8;" position="1 2 1"></a-entity>
+    <a-light type="directional" intensity="0.8" position="1 2 1"></a-light>
   </a-scene>
 
   <script>
-    // Registering gesture handler component for handling drag, rotate and scale gestures
     AFRAME.registerComponent('gesture-handler', {
       schema: {
         enabled: {default: true}
@@ -72,7 +70,7 @@
         this.el.setAttribute('position', {
           x: position.x + movementX * 0.01,
           y: position.y,
-          z: position.z + movementY * 0.01
+          z: position.z - movementY * 0.01
         });
       },
       onGestureStart: function (evt) {
@@ -80,16 +78,15 @@
         this.initialScale = this.el.getAttribute('scale').x;
       },
       onGestureChange: function (evt) {
-        if (evt.detail.type === 'rotate') {
-          const rotation = this.initialRotation + evt.detail.rotation;
+        if (evt.type === 'rotatestart' || evt.type === 'rotate') {
+          const rotation = this.initialRotation + evt.rotation;
           this.el.setAttribute('rotation', {
             x: 0,
             y: rotation,
             z: 0
           });
-        }
-        if (evt.detail.type === 'scale') {
-          const scale = this.initialScale * evt.detail.scale;
+        } else if (evt.type === 'pinchstart' || evt.type === 'pinch') {
+          const scale = this.initialScale * evt.scale;
           this.el.setAttribute('scale', {
             x: scale,
             y: scale,
@@ -97,7 +94,7 @@
           });
         }
       },
-      onGestureEnd: function (evt) {
+      onGestureEnd: function () {
         // No action needed on gesture end
       }
     });
