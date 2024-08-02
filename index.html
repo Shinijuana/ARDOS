@@ -16,13 +16,17 @@
       <a-box 
         color="red" 
         rotation="0 0 0" 
-        position="0 0 -10"
+        position="0 1 -10"
         scale="2 2 2">
       </a-box>
       <a-plane 
-        rotation="-90 0 0" 
-        width="30" 
-        height="30">
+       id="ground" 
+      rotation="-90 0 0" 
+      width="1000" 
+      height="1000" 
+      color="#ccc"
+      material="shader: shadow; opacity: 0.5;" 
+      shadow>
       </a-plane>
       <a-light type="ambient" color="#445451"></a-light>
       <a-light type="point" intensity="2" position="2 4 4"></a-light>  
