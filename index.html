@@ -12,6 +12,8 @@
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
   <!-- A-Frame Gesture Detector -->
   <script src="https://cdn.jsdelivr.net/gh/fernandojsg/aframe-gesture-detector@3.4.0/dist/aframe-gesture-detector.min.js"></script>
+  <!-- A-Frame Plane Detector -->
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js@3.3.2/aframe/build/aframe-ar.js"></script>
   <style>
     body {
       margin: 0;
@@ -38,7 +40,8 @@
 
   <a-scene
     vr-mode-ui="enabled: false"
-    arjs="trackingMethod: best; sourceType: webcam;"
+    embedded
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
     gesture-detector
     renderer="colorManagement: true"
     shadow="type: pcfsoft">
