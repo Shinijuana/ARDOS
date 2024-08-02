@@ -4,57 +4,93 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AR Experience</title>
+  <!-- A-Frame Core -->
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aframe-gesture-detector@4.0.3/dist/aframe-gesture-detector.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aframe-ar@1.0.0/dist/aframe-ar.min.js"></script>
+  <!-- A-Frame Extras -->
+  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+  <!-- A-Frame Gesture Detector -->
+  <script src="https://cdn.jsdelivr.net/gh/fernandojsg/aframe-gesture-detector@3.4.0/dist/aframe-gesture-detector.min.js"></script>
 </head>
 <body>
   <a-scene
-    embedded
-    arjs="sourceType: webcam; debugUIEnabled: false;"
     gesture-detector
     renderer="colorManagement: true"
     vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: true">
-
-    <!-- Camera che segue i movimenti del dispositivo -->
-    <a-camera
-      gps-camera
-      rotation-reader>
-    </a-camera>
-
-    <!-- Luce ambientale e direzionale -->
-    <a-light type="ambient" intensity="0.7"></a-light>
-    <a-light type="directional" intensity="0.8" position="1 2 1"></a-light>
+    shadow="type: pcfsoft">
 
     <a-assets>
       <!-- Assicurati che il percorso del modello sia corretto -->
       <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Modello 3D -->
-    <a-entity
-      id="model"
-      gltf-model="#sandCastleModel"
+    <a-camera
+      id="camera"
+      position="0 1.6 3"
+      raycaster="objects: .cantap"
+      cursor="fuse: false; rayOrigin: mouse;"
+      wasd-controls="enabled: false"
+      look-controls="touchEnabled: false">
+    </a-camera>
+
+    <a-light type="ambient" intensity="0.7"></a-light>
+    <a-light type="directional" intensity="0.8" position="1 2 1"></a-light>
+
+    <a-entity 
+      id="model" 
+      gltf-model="#sandCastleModel" 
+      class="cantap" 
+      scale="3 3 3" 
       position="0 0 -5"
-      scale="1 1 1"
-      gesture-handler>
+      shadow="receive: false"
+      hold-drag
+      two-finger-rotate
+      pinch-scale>
     </a-entity>
 
-    <!-- Piano per il rilevamento dei raggi -->
+    <!-- Plane for interaction (optional) -->
     <a-plane
-      id="ground"
-      rotation="-90 0 0"
-      width="1000"
-      height="1000"
-      material="shader: flat; color: #CCC;"
-      visible="false">
+      id="ground" 
+      rotation="-90 0 0" 
+      width="1000" 
+      height="1000" 
+      material="shader: shadow" 
+      shadow>
     </a-plane>
   </a-scene>
 
-  <!-- Gestore delle gesture -->
+  <!-- Gesture Handling Scripts -->
   <script>
-    AFRAME.registerComponent('gesture-handler', {
+    AFRAME.registerComponent('hold-drag', {
+      schema: {
+        enabled: {default: true}
+      },
+      init: function () {
+        this.el.addEventListener('mousedown', this.onMouseDown.bind(this));
+        this.el.addEventListener('mouseup', this.onMouseUp.bind(this));
+        this.el.addEventListener('mouseleave', this.onMouseUp.bind(this));
+        this.el.addEventListener('mousemove', this.onMouseMove.bind(this));
+        this.dragging = false;
+      },
+      onMouseDown: function () {
+        this.dragging = true;
+      },
+      onMouseUp: function () {
+        this.dragging = false;
+      },
+      onMouseMove: function (evt) {
+        if (!this.dragging) return;
+        const movementX = evt.movementX;
+        const movementY = evt.movementY;
+        const position = this.el.getAttribute('position');
+        this.el.setAttribute('position', {
+          x: position.x + movementX * 0.01,
+          y: position.y,
+          z: position.z + movementY * 0.01
+        });
+      }
+    });
+
+    AFRAME.registerComponent('two-finger-rotate', {
       schema: {
         enabled: {default: true}
       },
@@ -62,27 +98,46 @@
         this.el.addEventListener('gesturestart', this.onGestureStart.bind(this));
         this.el.addEventListener('gesturechange', this.onGestureChange.bind(this));
         this.el.addEventListener('gestureend', this.onGestureEnd.bind(this));
-        this.dragging = false;
         this.initialRotation = 0;
+      },
+      onGestureStart: function (evt) {
+        this.initialRotation = this.el.getAttribute('rotation').y;
+      },
+      onGestureChange: function (evt) {
+        const rotation = this.initialRotation + evt.rotation;
+        this.el.setAttribute('rotation', {
+          x: 0,
+          y: rotation,
+          z: 0
+        });
+      },
+      onGestureEnd: function (evt) {
+        // No action needed on gesture end
+      }
+    });
+
+    AFRAME.registerComponent('pinch-scale', {
+      schema: {
+        enabled: {default: true}
+      },
+      init: function () {
+        this.el.addEventListener('gesturestart', this.onGestureStart.bind(this));
+        this.el.addEventListener('gesturechange', this.onGestureChange.bind(this));
+        this.el.addEventListener('gestureend', this.onGestureEnd.bind(this));
         this.initialScale = 1;
       },
       onGestureStart: function (evt) {
-        if (evt.type === 'pinchstart' || evt.type === 'pinch') {
-          this.initialScale = this.el.getAttribute('scale').x;
-        } else if (evt.type === 'rotatestart' || evt.type === 'rotate') {
-          this.initialRotation = this.el.getAttribute('rotation').y;
-        }
+        this.initialScale = this.el.getAttribute('scale').x;
       },
       onGestureChange: function (evt) {
-        if (evt.type === 'pinchstart' || evt.type === 'pinch') {
-          const scale = this.initialScale * evt.scale;
-          this.el.setAttribute('scale', { x: scale, y: scale, z: scale });
-        } else if (evt.type === 'rotatestart' || evt.type === 'rotate') {
-          const rotation = this.initialRotation + evt.rotation;
-          this.el.setAttribute('rotation', { x: 0, y: rotation, z: 0 });
-        }
+        const scale = this.initialScale * evt.scale;
+        this.el.setAttribute('scale', {
+          x: scale,
+          y: scale,
+          z: scale
+        });
       },
-      onGestureEnd: function () {
+      onGestureEnd: function (evt) {
         // No action needed on gesture end
       }
     });
