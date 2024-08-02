@@ -24,7 +24,7 @@
     <a-entity light="type: directional; intensity: 0.8; castShadow: true;" position="1 2 1"></a-entity>
 
     <!-- Marker and 3D Model -->
-    <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="1 1 1" position="0 0 -10" shadow="receive: false" hold-drag two-finger-rotate pinch-scale></a-entity>
+    <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="1 1 1" position="0 0 -10" shadow="receive: false" hold-drag two-finger-rotate pinch-scale visible="false"></a-entity>
     <a-plane id="ground" rotation="-90 0 0" width="1000" height="1000" material="shader: shadow" shadow></a-plane>
   </a-scene>
 
@@ -73,6 +73,21 @@
         }
       }
     }
+
+    AFRAME.registerComponent('place-on-tap', {
+      init: function () {
+        const model = document.getElementById('model');
+        this.el.sceneEl.addEventListener('click', (evt) => {
+          const touch = evt.touches ? evt.touches[0] : evt;
+          const touchPoint = this.el.components.raycaster.getIntersection(touch.target);
+          if (touchPoint) {
+            const position = touchPoint.point;
+            model.setAttribute('position', position);
+            model.setAttribute('visible', true);
+          }
+        });
+      }
+    });
 
     AFRAME.registerComponent('hold-drag', {
       schema: {
