@@ -3,51 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Public AR Experience</title>
+  <title>AR Experience with Marker</title>
+  <!-- A-Frame Core -->
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+  <!-- AR.js for A-Frame -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/3.3.2/aframe/build/aframe-ar.js"></script>
+  <!-- A-Frame Extras -->
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+  <!-- A-Frame Gesture Detector -->
   <script src="https://cdn.jsdelivr.net/gh/fernandojsg/aframe-gesture-detector@3.4.0/dist/aframe-gesture-detector.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
 </head>
 <body>
   <a-scene
+    embedded
+    arjs="sourceType: webcam; debugUIEnabled: false;"
     gesture-detector
     renderer="colorManagement: true"
     vr-mode-ui="enabled: false">
 
-    <!-- We can define assets here to be loaded when A-Frame initializes -->
+    <!-- Assets -->
     <a-assets>
-      <!-- Credit to Poly by Google for the model: https://poly.google.com/view/5ZMAz7_ucTn -->
+      <!-- Model credit: Poly by Google -->
       <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
     </a-assets>
 
-    <!-- The raycaster will emit mouse events on scene objects specified with the cantap class -->
-    <a-camera
-      id="camera"
-      position="0 1.6 3"
-      raycaster="objects: .cantap"
-      cursor="fuse: false; rayOrigin: mouse;"
-      wasd-controls="enabled: false"
-      look-controls="touchEnabled: false">
-    </a-camera>
+    <!-- Camera with AR.js marker -->
+    <a-marker preset="hiro">
+      <a-entity 
+        id="model" 
+        gltf-model="#sandCastleModel" 
+        class="cantap" 
+        scale="3 3 3" 
+        position="0 0 0"
+        shadow="receive: false"
+        gesture-handler>
+      </a-entity>
+    </a-marker>
 
-    <a-entity
-      light="type: directional; intensity: 0.8; castShadow: true;"
-      position="1 2 1"
-      target="#model">
-    </a-entity>
-
+    <!-- Lighting -->
     <a-light type="ambient" intensity="0.7"></a-light>
-<a-marker preset="hiro">
-    <a-entity 
-      id="model" 
-      gltf-model="#sandCastleModel" 
-      class="cantap" 
-      scale="3 3 3" 
-      position="0 0 -5"
-      shadow="receive: false"
-      gesture-handler>
-    </a-entity>
-</a-marker>
+    <a-entity light="type: directional; intensity: 0.8; castShadow: true;" position="1 2 1"></a-entity>
+
+    <!-- Ground Plane -->
     <a-plane
       id="ground" 
       rotation="-90 0 0" 
@@ -56,6 +59,15 @@
       color="#7CFC00"
       shadow>
     </a-plane>
+
+    <!-- Camera -->
+    <a-camera
+      id="camera"
+      position="0 1.6 3"
+      raycaster="objects: .cantap"
+      cursor="fuse: false; rayOrigin: mouse;"
+      look-controls="touchEnabled: false">
+    </a-camera>
   </a-scene>
 
   <script>
