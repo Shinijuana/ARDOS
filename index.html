@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Public AR Experience</title>
-  <<script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/fernandojsg/aframe-gesture-detector@3.4.0/dist/aframe-gesture-detector.min.js"></script>
   <script src="https://rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
@@ -26,10 +26,10 @@
     <a-entity light="type: directional; intensity: 0.8; castShadow: true;" position="1 2 1"></a-entity>
 
     <!-- Marker and 3D Model -->
-    <a-marker type="image" url="images/marker.jpg">
-      <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="3 3 3" position="0 0 -5" shadow="receive: false" hold-drag two-finger-rotate pinch-scale></a-entity>
+    <a-image-target name="marker" url="images/marker.jpg">
+      <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="1 1 1" position="0 0 0" shadow="receive: false" hold-drag two-finger-rotate pinch-scale></a-entity>
       <a-plane id="ground" rotation="-90 0 0" width="1000" height="1000" material="shader: shadow" shadow></a-plane>
-    </a-marker>
+    </a-image-target>
   </a-scene>
 
   <!-- Gesture Handling Scripts -->
