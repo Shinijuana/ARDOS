@@ -3,25 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Public AR Experience</title>
+  <title>AR Experience</title>
+  <!-- A-Frame Core -->
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+  <!-- A-Frame Extras -->
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+  <!-- A-Frame Gesture Detector -->
   <script src="https://cdn.jsdelivr.net/gh/fernandojsg/aframe-gesture-detector@3.4.0/dist/aframe-gesture-detector.min.js"></script>
 </head>
 <body>
   <a-scene
     gesture-detector
-    loading
     renderer="colorManagement: true"
-    vr-mode-ui="enabled: false">
+    vr-mode-ui="enabled: false"
+    shadow="type: pcfsoft">
 
-    <!-- We can define assets here to be loaded when A-Frame initializes -->
     <a-assets>
-      <!-- Credit to Poly by Google for the model: https://poly.google.com/view/5ZMAz7_ucTn -->
+      <!-- Assicurati che il percorso del modello sia corretto -->
       <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
     </a-assets>
 
-    <!-- The raycaster will emit mouse events on scene objects specified with the cantap class -->
     <a-camera
       id="camera"
       position="0 1.6 3"
@@ -31,13 +32,8 @@
       look-controls="touchEnabled: false">
     </a-camera>
 
-    <a-entity
-      light="type: directional; intensity: 0.8; castShadow: true;"
-      position="1 2 1"
-      target="#model">
-    </a-entity>
-
     <a-light type="ambient" intensity="0.7"></a-light>
+    <a-light type="directional" intensity="0.8" position="1 2 1"></a-light>
 
     <a-entity 
       id="model" 
@@ -51,6 +47,7 @@
       pinch-scale>
     </a-entity>
 
+    <!-- Plane for interaction (optional) -->
     <a-plane
       id="ground" 
       rotation="-90 0 0" 
