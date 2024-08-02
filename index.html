@@ -22,18 +22,17 @@
 <body>
   <a-scene
     embedded
-    arjs="sourceType: webcam; debugUIEnabled: false;"
+    arjs="sourceType: webcam; debugUIEnabled: true;" 
     gesture-detector
     renderer="colorManagement: true"
     vr-mode-ui="enabled: false">
 
     <!-- Assets -->
     <a-assets>
-      <!-- Model credit: Poly by Google -->
       <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Camera with AR.js marker -->
+    <!-- AR Marker -->
     <a-marker preset="hiro">
       <a-entity 
         id="model" 
