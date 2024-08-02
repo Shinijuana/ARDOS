@@ -3,133 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Experience with Marker</title>
-  <!-- A-Frame Core -->
+  <title>AR.js Marker Test</title>
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-  <!-- AR.js for A-Frame -->
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/3.3.2/aframe/build/aframe-ar.js"></script>
-  <!-- A-Frame Extras -->
-  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
-  <!-- A-Frame Gesture Detector -->
-  <script src="https://cdn.jsdelivr.net/gh/fernandojsg/aframe-gesture-detector@3.4.0/dist/aframe-gesture-detector.min.js"></script>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-  </style>
 </head>
 <body>
-  <a-scene
-    embedded
-    arjs="sourceType: webcam; debugUIEnabled: true;" 
-    gesture-detector
-    renderer="colorManagement: true"
-    vr-mode-ui="enabled: false">
-
-    <!-- Assets -->
-    <a-assets>
-      <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
-    </a-assets>
-
-    <!-- AR Marker -->
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: true;">
     <a-marker preset="hiro">
-      <a-entity 
-        id="model" 
-        gltf-model="#sandCastleModel" 
-        class="cantap" 
-        scale="3 3 3" 
-        position="0 0 0"
-        shadow="receive: false"
-        gesture-handler>
-      </a-entity>
+      <a-box position="0 0.5 0" rotation="0 0 0" color="#4CC3D9"></a-box>
     </a-marker>
-
-    <!-- Lighting -->
-    <a-light type="ambient" intensity="0.7"></a-light>
-    <a-entity light="type: directional; intensity: 0.8; castShadow: true;" position="1 2 1"></a-entity>
-
-    <!-- Ground Plane -->
-    <a-plane
-      id="ground" 
-      rotation="-90 0 0" 
-      width="1000" 
-      height="1000" 
-      color="#7CFC00"
-      shadow>
-    </a-plane>
-
-    <!-- Camera -->
-    <a-camera
-      id="camera"
-      position="0 1.6 3"
-      raycaster="objects: .cantap"
-      cursor="fuse: false; rayOrigin: mouse;"
-      look-controls="touchEnabled: false">
-    </a-camera>
+    <a-entity camera></a-entity>
   </a-scene>
-
-  <script>
-    // Registering gesture handler component for handling drag, rotate and scale gestures
-    AFRAME.registerComponent('gesture-handler', {
-      schema: {
-        enabled: {default: true}
-      },
-      init: function () {
-        this.el.addEventListener('mousedown', this.onMouseDown.bind(this));
-        this.el.addEventListener('mouseup', this.onMouseUp.bind(this));
-        this.el.addEventListener('mouseleave', this.onMouseUp.bind(this));
-        this.el.addEventListener('mousemove', this.onMouseMove.bind(this));
-        this.el.addEventListener('gesturestart', this.onGestureStart.bind(this));
-        this.el.addEventListener('gesturechange', this.onGestureChange.bind(this));
-        this.el.addEventListener('gestureend', this.onGestureEnd.bind(this));
-        this.dragging = false;
-        this.initialRotation = 0;
-        this.initialScale = 1;
-      },
-      onMouseDown: function () {
-        this.dragging = true;
-      },
-      onMouseUp: function () {
-        this.dragging = false;
-      },
-      onMouseMove: function (evt) {
-        if (!this.dragging) return;
-        const movementX = evt.movementX;
-        const movementY = evt.movementY;
-        const position = this.el.getAttribute('position');
-        this.el.setAttribute('position', {
-          x: position.x + movementX * 0.01,
-          y: position.y,
-          z: position.z + movementY * 0.01
-        });
-      },
-      onGestureStart: function (evt) {
-        this.initialRotation = this.el.getAttribute('rotation').y;
-        this.initialScale = this.el.getAttribute('scale').x;
-      },
-      onGestureChange: function (evt) {
-        if (evt.detail.type === 'rotate') {
-          const rotation = this.initialRotation + evt.detail.rotation;
-          this.el.setAttribute('rotation', {
-            x: 0,
-            y: rotation,
-            z: 0
-          });
-        }
-        if (evt.detail.type === 'scale') {
-          const scale = this.initialScale * evt.detail.scale;
-          this.el.setAttribute('scale', {
-            x: scale,
-            y: scale,
-            z: scale
-          });
-        }
-      },
-      onGestureEnd: function (evt) {
-        // No action needed on gesture end
-      }
-    });
-  </script>
 </body>
 </html>
