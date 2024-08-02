@@ -1,9 +1,20 @@
-<!-- AR.js by @jerome_etienne - github: https://github.com/jeromeetienne/ar.js - info: https://medium.com/arjs/augmented-reality-in-10-lines-of-html-4e193ea9fdbf -->
-<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
- <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-<body style='margin : 0px; overflow: hidden;'>
-	<a-scene embedded arjs='sourceType: webcam;'>
-		<a-box position='0 0.5 0' material='opacity: 0.5;'></a-box>
-		<a-marker-camera preset='hiro'></a-marker-camera>
-	</a-scene>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAR with Babylon.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/babylonjs@latest/babylon.max.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babylonjs-loaders@latest/babylonjs.loaders.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babylonjs-gui@latest/babylonjs.gui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babylonjs-ar@latest/babylonjs.ar.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { width: 100vw; height: 100vh; display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script src="main.js"></script>
 </body>
+</html>
