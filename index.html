@@ -18,7 +18,10 @@
     device-orientation-permission-ui="enabled: true">
 
     <!-- Camera che segue i movimenti del dispositivo -->
-    <a-camera gps-camera rotation-reader></a-camera>
+    <a-camera
+      gps-camera
+      rotation-reader>
+    </a-camera>
 
     <!-- Luce ambientale e direzionale -->
     <a-light type="ambient" intensity="0.7"></a-light>
@@ -33,10 +36,20 @@
     <a-entity
       id="model"
       gltf-model="#sandCastleModel"
-      position="0 0 -5"  
-      scale="1 1 1"   
+      position="0 0 -5"
+      scale="1 1 1"
       gesture-handler>
     </a-entity>
+
+    <!-- Piano per il rilevamento dei raggi -->
+    <a-plane
+      id="ground"
+      rotation="-90 0 0"
+      width="1000"
+      height="1000"
+      material="shader: flat; color: #CCC;"
+      visible="false">
+    </a-plane>
   </a-scene>
 
   <!-- Gestore delle gesture -->
