@@ -7,12 +7,12 @@
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/fernandojsg/aframe-gesture-detector@3.4.0/dist/aframe-gesture-detector.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/xrextras/aframe/dist/aframe-xrextras.min.js"></script>
+  <script src="https://rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/xrextras/aframe/dist/aframe-xrextras.min.js"></script>
 </head>
 
 <body>
-  <a-scene gesture-detector loading renderer="colorManagement: true" vr-mode-ui="enabled: false" arjs='sourceType: webcam;'>
+  <a-scene gesture-detector loading renderer="colorManagement: true" vr-mode-ui="enabled: false">
     <!-- Assets -->
     <a-assets>
       <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
@@ -26,10 +26,10 @@
     <a-entity light="type: directional; intensity: 0.8; castShadow: true;" position="1 2 1"></a-entity>
 
     <!-- Marker and 3D Model -->
-    <a-marker preset="custom" url="images/marker.jpg">
+    <a-image-target name="marker" url="images/marker.pat">
       <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="1 1 1" position="0 0 0" shadow="receive: false" hold-drag two-finger-rotate pinch-scale></a-entity>
       <a-plane id="ground" rotation="-90 0 0" width="1000" height="1000" material="shader: shadow" shadow></a-plane>
-    </a-marker>
+    </a-image-target>
   </a-scene>
 
   <!-- Gesture Handling Scripts -->
