@@ -23,68 +23,38 @@
     <a-light type="ambient" intensity="0.7"></a-light>
     <a-entity light="type: directional; intensity: 0.8; castShadow: true;" position="1 2 1"></a-entity>
 
-    <!-- Marker and 3D Model -->
-    <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="1 1 1" position="0 0 -10" shadow="receive: false" hold-drag two-finger-rotate pinch-scale visible="false"></a-entity>
+    <!-- 3D Model -->
+    <a-entity id="model" gltf-model="#sandCastleModel" class="cantap" scale="1 1 1" visible="false" shadow="receive: false" hold-drag two-finger-rotate pinch-scale></a-entity>
+
     <a-plane id="ground" rotation="-90 0 0" width="1000" height="1000" material="shader: shadow" shadow></a-plane>
   </a-scene>
 
   <script>
     document.getElementById('start-ar').addEventListener('click', async () => {
-      if (navigator.xr) {
-        try {
-          const xrSession = await navigator.xr.requestSession('immersive-ar', {
-            requiredFeatures: ['local-floor']
-          });
-          onSessionStarted(xrSession);
-        } catch (e) {
-          console.error('Failed to start AR session:', e);
-        }
-      } else {
-        console.log('WebXR not supported');
-      }
+      const sceneEl = document.querySelector('a-scene');
+      const xrSession = await navigator.xr.requestSession('immersive-ar', {
+        optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking']
+      });
+      sceneEl.xrSession = xrSession;
+      sceneEl.renderer.xr.setSession(xrSession);
+      sceneEl.setAttribute('xrweb', '');
     });
 
-    async function onSessionStarted(session) {
-      const sceneEl = document.querySelector('a-scene');
-      const gl = sceneEl.renderer.getContext();
-      await gl.makeXRCompatible();
-      const xrLayer = new XRWebGLLayer(session, gl);
-
-      session.updateRenderState({ baseLayer: xrLayer });
-
-      const referenceSpace = await session.requestReferenceSpace('local-floor');
-
-      session.requestAnimationFrame(onXRFrame);
-
-      function onXRFrame(time, frame) {
-        const session = frame.session;
-        session.requestAnimationFrame(onXRFrame);
-
-        const pose = frame.getViewerPose(referenceSpace);
-        if (pose) {
-          const glLayer = session.renderState.baseLayer;
-          gl.bindFramebuffer(gl.FRAMEBUFFER, glLayer.framebuffer);
-          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-          for (const view of pose.views) {
-            const viewport = glLayer.getViewport(view);
-            gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
-          }
-        }
-      }
-    }
-
-    AFRAME.registerComponent('place-on-tap', {
+    AFRAME.registerComponent('xrweb', {
       init: function () {
+        const sceneEl = this.el;
         const model = document.getElementById('model');
-        this.el.sceneEl.addEventListener('click', (evt) => {
-          const touch = evt.touches ? evt.touches[0] : evt;
-          const touchPoint = this.el.components.raycaster.getIntersection(touch.target);
-          if (touchPoint) {
-            const position = touchPoint.point;
-            model.setAttribute('position', position);
-            model.setAttribute('visible', true);
-          }
+
+        sceneEl.renderer.xr.addEventListener('sessionstart', () => {
+          sceneEl.addEventListener('click', (evt) => {
+            const touch = evt.touches ? evt.touches[0] : evt;
+            const touchPoint = sceneEl.components.raycaster.getIntersection(touch.target);
+            if (touchPoint) {
+              const position = touchPoint.point;
+              model.setAttribute('position', position);
+              model.setAttribute('visible', true);
+            }
+          });
         });
       }
     });
