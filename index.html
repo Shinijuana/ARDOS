@@ -51,8 +51,9 @@
         <a-entity 
             id="sandcastle" 
             gltf-model="#sandcastleModel" 
-            scale="0.5 0.5 0.5" 
+            scale="1 1 1" 
             visible="false"
+            position="0 0 0"
             shadow="receive: true; cast: true;"
         ></a-entity>
         <a-camera
@@ -66,36 +67,6 @@
         <a-entity light="type: directional; intensity: 1; position: 0 10 0;"></a-entity>
     </a-scene>
 
-    <script>
-        const sceneEl = document.querySelector('a-scene');
-        const sandcastleEl = document.getElementById('sandcastle');
-        const arButton = document.getElementById('ar-button');
-
-        arButton.addEventListener('click', () => {
-            if (navigator.xr) {
-                navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
-                    if (supported) {
-                        sceneEl.enterAR();
-                        arButton.style.display = 'none';
-                    } else {
-                        alert('AR not supported on this device/browser.');
-                    }
-                });
-            } else {
-                alert('WebXR not supported on this device/browser.');
-            }
-        });
-
-        sceneEl.addEventListener('ar-hit-test-start', () => {
-            console.log('Hit test started');
-        });
-
-        sceneEl.addEventListener('ar-hit-test-select', (event) => {
-            const pose = event.detail.pose;
-            sandcastleEl.setAttribute('position', pose.position);
-            sandcastleEl.setAttribute('rotation', '0 ' + THREE.Math.radToDeg(pose.rotation.y) + ' 0');
-            sandcastleEl.setAttribute('visible', 'true');
-        });
-    </script>
+    
 </body>
 </html>
