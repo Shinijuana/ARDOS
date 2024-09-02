@@ -4,48 +4,34 @@
     <title>A-Frame World Tracking Example</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/alvaar.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/hand-tracking.js"></script>
-    <script src="https://hammerjs.github.io/dist/hammer.min.js"></script> <!-- Aggiungi Hammer.js -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    <script src="js/gesture-detector.js"></script>
+    <script src="js/gesture-handler.js"></script>
 </head>
 <body>
-    <a-scene>
+    <a-scene
+        gesture-detector
+        arjs
+        embedded
+        renderer="logarithmicDepthBuffer: true;"
+        id="scene"
+    >
         <a-assets>
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
 
         <a-plane id="tracked" rotation="0 0 0" position="0 0 0" scale="1 1 1" opacity="0.1">
-            <a-entity id="sandcastle" gltf-model="#sandcastleModel" position="0 0 -5" scale=".6 .6 .6" gesture-handler class="cantap"></a-entity>
+            <a-entity 
+                id="sandcastle" 
+                gltf-model="#sandcastleModel" 
+                position="0 0 -5" 
+                scale=".6 .6 .6" 
+                class="clickable" 
+                gesture-handler>
+            </a-entity>
         </a-plane>
 
-        <a-entity id="hand-tracking" alvaar-hand-tracking></a-entity>
     </a-scene>
-
-    <script>
-        AFRAME.registerComponent('gesture-handler', {
-            init: function () {
-                const sandcastle = document.getElementById('sandcastle');
-
-                // Configurare Hammer.js per la gestione delle gesture cross-platform
-                const hammer = new Hammer(sandcastle);
-
-                hammer.get('pinch').set({ enable: true });
-                hammer.get('rotate').set({ enable: true });
-
-                hammer.on('pinch', (event) => {
-                    sandcastle.object3D.scale.multiplyScalar(1.1);
-                });
-
-                hammer.on('rotate', (event) => {
-                    sandcastle.object3D.rotation.y += 0.1;
-                });
-
-                hammer.on('swipe', (event) => {
-                    sandcastle.object3D.position.x += 0.1;
-                });
-            }
-        });
-
-        document.getElementById('sandcastle').setAttribute('gesture-handler', '');
-    </script>
 </body>
 </html>
