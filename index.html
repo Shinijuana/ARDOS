@@ -6,7 +6,6 @@
     <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/alvaar.min.js"></script>
 </head>
 <body>
-    <div id="container"></div>
     <a-scene embedded>
         <a-assets>
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
@@ -17,11 +16,14 @@
     </a-scene>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Inizializza AlvaAR senza mostrare la UI di scelta
             AlvaAR.init({
                 container: document.querySelector('a-scene'),  // Imposta il container alla scena A-Frame
                 onReady: () => {
                     console.log('AR è pronto!');
-                    AlvaAR.enterAR();  // Entra automaticamente in modalità AR
+                    setTimeout(() => {
+                        AlvaAR.enterAR();  // Entra automaticamente in modalità AR
+                    }, 1000);  // Piccola pausa per assicurarsi che tutto sia caricato
                 },
                 onError: (error) => {
                     console.error('Errore durante l\'inizializzazione di AR:', error);
