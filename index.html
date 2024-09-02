@@ -6,8 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/alvaar.min.js"></script>
-    
-    
     <script src="js/gesture-detector.js"></script>
     <script src="js/gesture-handler.js"></script>
 </head>
@@ -20,13 +18,13 @@
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
 
-         <a-camera
+        <a-camera
             id="camera"
             position="0 8 8"
-            raycaster="objects: .cantap"
+            raycaster="objects: .clickable"
             cursor="fuse: false; rayOrigin: mouse;"
             emitevents="true">
-          </a-camera>
+        </a-camera>
         
         <a-plane 
             id="tracked" 
@@ -40,10 +38,10 @@
                 position="0 0 -5" 
                 scale=".6 .6 .6" 
                 class="clickable" 
+                emitevents="true"
                 gesture-handler>
             </a-entity>
         </a-plane>
-
     </a-scene>
 </body>
 </html>
