@@ -7,7 +7,7 @@
 </head>
 <body>
     <div id="container"></div>
-    <a-scene>
+    <a-scene arjs="sourceType: webcam; debugUIEnabled: false" embedded>
         <a-assets>
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
@@ -23,35 +23,36 @@
     </a-scene>
 
     <script>
+        AFRAME.registerComponent('auto-enter-ar', {
+            init: function () {
+                const sceneEl = this.el;
+                sceneEl.addEventListener('loaded', function () {
+                    if (sceneEl.enterAR) {
+                        sceneEl.enterAR();
+                    } else if (sceneEl.enterVR) {
+                        sceneEl.enterVR();  // Fallback to VR if AR is not available
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const sceneEl = document.querySelector('a-scene');
-
-            // Attiva la modalità AR quando la scena è pronta
-            sceneEl.addEventListener('loaded', function () {
-                if (sceneEl.enterAR) {
-                    sceneEl.enterAR();
-                } else if (sceneEl.enterVR) {
-                    sceneEl.enterVR();  // Fallback to VR if AR is not available
-                }
-            });
-
-            // Gesture per manipolare l'oggetto 3D
             const sandcastle = document.getElementById('sandcastle');
             let initialScale = sandcastle.getAttribute('scale');
             let initialPosition = sandcastle.getAttribute('position');
-            let initialRotation = sandcastle.getAttribute('rotation');
-
             let isDragging = false;
             let previousTouches = [];
 
-            sceneEl.addEventListener('touchstart', function (e) {
+            document.querySelector('a-scene').addEventListener('touchstart', function (e) {
                 if (e.touches.length === 1) {
                     isDragging = true;
                 }
                 previousTouches = e.touches;
             });
 
-            sceneEl.addEventListener('touchmove', function (e) {
+            document.querySelector('a-scene').addEventListener('touchmove', function (e) {
                 if (e.touches.length === 1 && isDragging) {
                     const dx = e.touches[0].clientX - previousTouches[0].clientX;
                     const dy = e.touches[0].clientY - previousTouches[0].clientY;
@@ -83,7 +84,7 @@
                 previousTouches = e.touches;
             });
 
-            sceneEl.addEventListener('touchend', function () {
+            document.querySelector('a-scene').addEventListener('touchend', function () {
                 isDragging = false;
             });
         });
