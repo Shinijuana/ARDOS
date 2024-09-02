@@ -20,15 +20,20 @@
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
 
+         <a-camera
+            id="camera"
+            position="0 8 8"
+            raycaster="objects: .cantap"
+            cursor="fuse: false; rayOrigin: mouse;"
+            emitevents="true">
+          </a-camera>
+        
         <a-plane 
             id="tracked" 
             rotation="0 0 0" 
             position="0 0 0" 
             scale="1 1 1" 
-            opacity="0.1"  
-            raycaster="objects: .clickable"
-            emitevents="true"
-            cursor="fuse: false; rayOrigin: mouse;">
+            opacity="0.1">
             <a-entity 
                 id="sandcastle" 
                 gltf-model="#sandcastleModel" 
