@@ -3,57 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Sandcastle</title>
-    <!-- Include A-Frame -->
+    <title>AR Sandcastle Experience</title>
+    <!-- A-Frame Library -->
     <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-    <!-- Include AR.js for AR support -->
-    <script src="https://cdn.jsdelivr.net/npm/aframe-ar@3.3.0/aframe-ar.min.js"></script>
+    <!-- A-Frame Extras for WebXR AR -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+    <!-- A-Frame Hit Test Component -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe-ar-hit-test@1.0.0/dist/aframe-ar-hit-test.min.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-        a-scene { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+            background-color: black;
+        }
+        #ar-button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background-color: #ff4081;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <!-- The A-Frame scene with AR.js support -->
-    <a-scene
+    <button id="ar-button">Enter AR</button>
+    <a-scene 
+        renderer="colorManagement: true; physicallyCorrectLights: true;"
+        xrweb="enterVRButton: false;"
         embedded
         vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; debugUIEnabled: false; videoTexture: true;">
-        
-        <!-- Assets to be used in the scene -->
+        ar-hit-test
+        id="scene"
+    >
         <a-assets>
-            <!-- 3D model of the sandcastle -->
-            <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
+            <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
 
-        <!-- Camera setup for AR.js -->
-        <a-camera
-            position="0 0 0"
-            look-controls="enabled: false"
-            arjs-look-controls="smoothingFactor: 0.1">
-        </a-camera>
-        
-        <!-- The 3D model entity to be placed in the real world -->
-        <a-entity
-            id="model"
-            gltf-model="#sandCastleModel"
-            scale="3 3 3"
-            position="0 0 0"
-            rotation="0 0 0">
-        </a-entity>
-        
-        <!-- Ambient and directional lights -->
-        <a-light type="ambient" intensity="0.7"></a-light>
-        <a-light type="directional" intensity="0.8" position="1 1 0"></a-light>
-        
-        <!-- A ground plane for visual reference -->
-        <a-plane
-            rotation="-90 0 0"
-            width="5"
-            height="5"
-            color="#7BC8A4">
-        </a-plane>
-        
+        <a-entity 
+            id="sandcastle" 
+            gltf-model="#sandcastleModel" 
+            scale="0.5 0.5 0.5" 
+            visible="false"
+            shadow="receive: true; cast: true;"
+        ></a-entity>
+
+        <!-- Lighting -->
+        <a-entity light="type: ambient; intensity: 0.5;"></a-entity>
+        <a-entity light="type: directional; intensity: 1; position: 0 10 0;"></a-entity>
     </a-scene>
+
+    <script>
+        const sceneEl = document.querySelector('a-scene');
+        const sandcastleEl = document.getElementById('sandcastle');
+        const arButton = document.getElementById('ar-button');
+
+        arButton.addEventListener('click', () => {
+            if (navigator.xr) {
+                navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+                    if (supported) {
+                        sceneEl.enterAR();
+                        arButton.style.display = 'none';
+                    } else {
+                        alert('AR not supported on this device/browser.');
+                    }
+                });
+            } else {
+                alert('WebXR not supported on this device/browser.');
+            }
+        });
+
+        sceneEl.addEventListener('ar-hit-test-start', () => {
+            console.log('Hit test started');
+        });
+
+        sceneEl.addEventListener('ar-hit-test-select', (event) => {
+            const pose = event.detail.pose;
+            sandcastleEl.setAttribute('position', pose.position);
+            sandcastleEl.setAttribute('rotation', '0 ' + THREE.Math.radToDeg(pose.rotation.y) + ' 0');
+            sandcastleEl.setAttribute('visible', 'true');
+        });
+    </script>
 </body>
 </html>
