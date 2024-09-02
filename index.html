@@ -3,18 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAR with Babylon.js</title>
-    <script src="https://cdn.jsdelivr.net/npm/babylonjs@latest/babylon.max.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/babylonjs-loaders@latest/babylonjs.loaders.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/babylonjs-gui@latest/babylonjs.gui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/babylonjs-ar@latest/babylonjs.ar.min.js"></script>
+    <title>Standalone AR Experience</title>
+    <!-- Include A-Frame -->
+    <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+    <!-- Include optional A-Frame Extras for gestures (or implement your own) -->
+    <script src="https://unpkg.com/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { width: 100vw; height: 100vh; display: block; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
     </style>
 </head>
 <body>
-    <canvas id="renderCanvas"></canvas>
-    <script src="main.js"></script>
+    <a-scene 
+        vr-mode-ui="enabled: false"
+        renderer="colorManagement: true" 
+        embedded>
+        
+        <a-assets>
+            <a-asset-item id="sandCastleModel" src="assets/sand-castle.glb"></a-asset-item>
+        </a-assets>
+        
+        <a-camera 
+            id="camera" 
+            position="0 8 8" 
+            wasd-controls-enabled="false"
+            raycaster="objects: .cantap"
+            cursor="fuse: false; rayOrigin: mouse;">
+        </a-camera>
+        
+        <a-entity 
+            light="type: directional; intensity: 0.8; castShadow: true; shadowMapHeight:2048; shadowMapWidth:2048; shadowCameraTop: 10; target: #model; shadowRadius: 12;">
+        </a-entity>
+        
+        <a-light type="ambient" intensity="0.7"></a-light>
+        
+        <a-entity 
+            id="model" 
+            gltf-model="#sandCastleModel" 
+            class="cantap" 
+            scale="3 3 3"
+            shadow="receive: false"
+            position="0 0 0"
+            rotation="0 0 0"
+            gesture-handler>
+        </a-entity>
+        
+        <a-plane 
+            id="ground" 
+            rotation="-90 0 0" 
+            width="1000" 
+            height="1000" 
+            material="shader: shadow" 
+            shadow>
+        </a-plane>
+    </a-scene>
+
+    <!-- Custom script for gestures if not using aframe-extras -->
+    <script>
+        AFRAME.registerComponent('gesture-handler', {
+            init: function () {
+                var el = this.el;
+                el.addEventListener('click', function (evt) {
+                    console.log('Clicked on', el);
+                    // Handle gestures here
+                });
+            }
+        });
+    </script>
 </body>
 </html>
