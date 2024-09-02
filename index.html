@@ -14,22 +14,5 @@
             <a-entity id="sandcastle" gltf-model="#sandcastleModel" position="0 0 -5" scale=".6 .6 .6"></a-entity>
         </a-plane>
     </a-scene>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Inizializza AlvaAR senza mostrare la UI di scelta
-            AlvaAR.init({
-                container: document.querySelector('a-scene'),  // Imposta il container alla scena A-Frame
-                onReady: () => {
-                    console.log('AR è pronto!');
-                    setTimeout(() => {
-                        AlvaAR.enterAR();  // Entra automaticamente in modalità AR
-                    }, 1000);  // Piccola pausa per assicurarsi che tutto sia caricato
-                },
-                onError: (error) => {
-                    console.error('Errore durante l\'inizializzazione di AR:', error);
-                }
-            });
-        });
-    </script>
 </body>
 </html>
