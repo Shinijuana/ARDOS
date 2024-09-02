@@ -37,8 +37,8 @@
 <body>
     <button id="ar-button">Enter AR</button>
     <a-scene 
-        renderer="colorManagement: true; physicallyCorrectLights: true;"
-        xrweb="enterVRButton: false;"
+        renderer="colorManagement: true"
+        xrweb="allowedDevices: any"
         embedded
         vr-mode-ui="enabled: false"
         ar-hit-test
@@ -55,7 +55,12 @@
             visible="false"
             shadow="receive: true; cast: true;"
         ></a-entity>
-
+        <a-camera
+            id="camera"
+            position="0 8 8"
+            raycaster="objects: .cantap"
+            cursor="fuse: false; rayOrigin: mouse;">
+        </a-camera>
         <!-- Lighting -->
         <a-entity light="type: ambient; intensity: 0.5;"></a-entity>
         <a-entity light="type: directional; intensity: 1; position: 0 10 0;"></a-entity>
