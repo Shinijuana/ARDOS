@@ -4,27 +4,46 @@
     <title>A-Frame World Tracking Example</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/alvaar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/hand-tracking.js"></script> <!-- Includere hand-tracking -->
 </head>
 <body>
-    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
+    <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;" vr-mode-ui="enabled: false">
         <a-assets>
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
+
         <a-plane id="tracked" rotation="0 0 0" position="0 0 0" scale="1 1 1" opacity="0.1">
             <a-entity id="sandcastle" gltf-model="#sandcastleModel" position="0 0 -5" scale=".6 .6 .6"></a-entity>
         </a-plane>
+
+        <a-entity id="hand-tracking" alvaar-hand-tracking></a-entity> <!-- Sistema di riconoscimento mani -->
     </a-scene>
 
     <script>
-        // Autostart AR experience
-        document.querySelector('a-scene').addEventListener('loaded', () => {
-            const scene = document.querySelector('a-scene');
-            if (scene.hasLoaded) {
-                scene.enterAR();
-            } else {
-                scene.addEventListener('loaded', () => scene.enterAR());
+        AFRAME.registerComponent('gesture-handler', {
+            init: function () {
+                const sandcastle = document.getElementById('sandcastle');
+                const handTracking = document.getElementById('hand-tracking');
+
+                handTracking.addEventListener('gesture', (event) => {
+                    const gesture = event.detail.gesture;
+
+                    if (gesture === 'pinch') {
+                        // Scala l'oggetto
+                        sandcastle.object3D.scale.multiplyScalar(1.1);
+                    } else if (gesture === 'rotate') {
+                        // Ruota l'oggetto
+                        sandcastle.object3D.rotation.y += 0.1;
+                    } else if (gesture === 'swipe') {
+                        // Muove l'oggetto
+                        sandcastle.object3D.position.x += 0.1;
+                    }
+                });
             }
         });
+
+        // Aggiungere il componente di gestione delle gesture all'entità
+        document.getElementById('sandcastle').setAttribute('gesture-handler', '');
     </script>
 </body>
 </html>
