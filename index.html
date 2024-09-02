@@ -4,15 +4,16 @@
     <title>A-Frame World Tracking Example</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/alvaar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe/dist/aframe-ar.js"></script> <!-- Include AR.js -->
     <style>
-        /* Nascondi il menu AR/VR se presente */
-        .aframe-ar {
+        /* Assicurati che il canvas AR sia visibile */
+        .a-enter-vr-button {
             display: none;
         }
     </style>
 </head>
 <body>
-    <a-scene embedded vr-mode-ui="enabled: false" arjs='sourceType: webcam; debugUIEnabled: false;' alvaar>
+    <a-scene embedded vr-mode-ui="enabled: false" arjs='sourceType: webcam; debugUIEnabled: false;'>
         <a-assets>
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
