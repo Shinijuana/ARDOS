@@ -6,7 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/alvaar.min.js"></script>
 </head>
 <body>
-    <a-scene embedded>
+    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;">
         <a-assets>
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
@@ -14,5 +14,17 @@
             <a-entity id="sandcastle" gltf-model="#sandcastleModel" position="0 0 -5" scale=".6 .6 .6"></a-entity>
         </a-plane>
     </a-scene>
+
+    <script>
+        // Autostart AR experience
+        document.querySelector('a-scene').addEventListener('loaded', () => {
+            const scene = document.querySelector('a-scene');
+            if (scene.hasLoaded) {
+                scene.enterAR();
+            } else {
+                scene.addEventListener('loaded', () => scene.enterAR());
+            }
+        });
+    </script>
 </body>
 </html>
