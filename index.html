@@ -1,59 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>A-Frame Gesture Example</title>
+    <title>A-Frame World Tracking Example</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/alvaar.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aframe-gesture-detector@latest/dist/aframe-gesture-detector.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alvaar/dist/hand-tracking.js"></script>
+    <script src="https://hammerjs.github.io/dist/hammer.min.js"></script> <!-- Aggiungi Hammer.js -->
 </head>
 <body>
     <a-scene>
         <a-assets>
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
-        <a-light type="directional" position="-1 2 1" intensity="1" castShadow></a-light>
 
-        <!-- Luce ambientale per illuminazione generale -->
-        <a-light type="ambient" intensity="0.5"></a-light>
-        <a-plane id="tracked" rotation="0 0 0" position="0 0 0" scale="1 1 1" opacity="0.1" receiveShadow>
-            <a-entity id="sandcastle" 
-                      gltf-model="#sandcastleModel" 
-                      position="0 0 -5" 
-                      scale=".6 .6 .6"
-                      gesture-detector>
-            </a-entity>
+        <a-plane id="tracked" rotation="0 0 0" position="0 0 0" scale="1 1 1" opacity="0.1">
+            <a-entity id="sandcastle" gltf-model="#sandcastleModel" position="0 0 -5" scale=".6 .6 .6"></a-entity>
         </a-plane>
+
+        <a-entity id="hand-tracking" alvaar-hand-tracking></a-entity>
     </a-scene>
 
     <script>
         AFRAME.registerComponent('gesture-handler', {
             init: function () {
-                const sandcastle = this.el;
+                const sandcastle = document.getElementById('sandcastle');
 
-                this.el.addEventListener('pinchstarted', (event) => {
+                // Configurare Hammer.js per la gestione delle gesture cross-platform
+                const hammer = new Hammer(sandcastle);
+
+                hammer.get('pinch').set({ enable: true });
+                hammer.get('rotate').set({ enable: true });
+
+                hammer.on('pinch', (event) => {
                     sandcastle.object3D.scale.multiplyScalar(1.1);
                 });
 
-                this.el.addEventListener('pinchended', (event) => {
-                    sandcastle.object3D.scale.multiplyScalar(0.9);
-                });
-
-                this.el.addEventListener('rotatestarted', (event) => {
+                hammer.on('rotate', (event) => {
                     sandcastle.object3D.rotation.y += 0.1;
                 });
 
-                this.el.addEventListener('swipe', (event) => {
-                    const direction = event.detail.direction;
-                    if (direction === 'left') {
-                        sandcastle.object3D.position.x -= 0.1;
-                    } else if (direction === 'right') {
-                        sandcastle.object3D.position.x += 0.1;
-                    }
+                hammer.on('swipe', (event) => {
+                    sandcastle.object3D.position.x += 0.1;
                 });
             }
         });
 
-        // Associa il componente al modello
         document.getElementById('sandcastle').setAttribute('gesture-handler', '');
     </script>
 </body>
