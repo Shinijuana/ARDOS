@@ -1,48 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Sandcastle Experience</title>
-    <!-- A-Frame Library -->
-    <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
-    <!-- A-Frame Extras for WebXR AR -->
-    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
-    <!-- A-Frame Hit Test Component -->
-    <script src="https://cdn.jsdelivr.net/npm/aframe-ar-hit-test@1.0.0/dist/aframe-ar-hit-test.min.js"></script>
+    <title>A-Frame World Tracking Example</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script type="module" src="js/world-tracking.js"></script>
 </head>
 <body>
-    <a-scene 
-        renderer="colorManagement: true"
-        xrweb="allowedDevices: any"
-        embedded
-        vr-mode-ui="enabled: false"
-        ar-hit-test
-        id="scene"
-    >
+    <div id="container"></div>
+    <a-scene>
         <a-assets>
             <a-asset-item id="sandcastleModel" src="assets/sand-castle.glb"></a-asset-item>
         </a-assets>
-
-        <a-entity 
-            id="sandcastle" 
+        <a-plane id="tracked" position="0 0 0" scale="0 0 0" opacity="0.1">
+            <a-entity   id="sandcastle" 
             gltf-model="#sandcastleModel" 
-            scale="1 1 1" 
-            visible="false"
-            position="0 0 0"
-            shadow="receive: true; cast: true;"
-        ></a-entity>
-        <a-camera
-            id="camera"
-            position="0 8 8"
-            raycaster="objects: .cantap"
-            cursor="fuse: false; rayOrigin: mouse;">
-        </a-camera>
-        <!-- Lighting -->
-        <a-entity light="type: ambient; intensity: 0.5;"></a-entity>
-        <a-entity light="type: directional; intensity: 1; position: 0 10 0;"></a-entity>
+            scale="1 1 1"  ></a-entity>
+        </a-plane>
     </a-scene>
-
-    
 </body>
 </html>
+
+
